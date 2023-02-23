@@ -1,0 +1,132 @@
+---
+title: "Codigo Reto"
+author: "Equipo 4"
+date: "2022-09-01"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Mariana Ivette Rincón Flores A01654973
+Leonardo Laureles Olmedo A01659241
+Carlos Mateos Perez A01654085
+Renata Vargas Caballero A01025281
+Andrea Bravo Avila A01028579
+Alberto Lozano Cárdenas A01067141
+
+
+```{r setup, include=FALSE}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(factoextra)
+```
+
+```{r setup, include=FALSE}
+df <- read_csv("datos_completos_binarios.csv")
+df <- df[ , c(-1:-3)]
+print(df)
+```
+
+
+```{r cars}
+df<-scale(df)
+```
+
+```{r}
+#make this example reproducible
+set.seed(1)
+
+#perform k-means clustering with k = 4 clusters
+km <- kmeans(df, centers = 2, nstart = 50)
+
+#view results
+km
+```
+
+```{r}
+fviz_cluster(km, data = df)
+```
+
+
+```{r}
+
+N = read.csv("datos_completos_binarios.csv") #aqui se cambia a datos_completos_limpios.csv
+N <- N[ , c(-1, -2, -3)]
+```
+
+```{r}
+library(GPArotation) # hay que instalar GPArotation si se usa por primera vez
+library(psych) 
+
+R = cor(N)
+rot = c("none", "varimax", "quartimax")
+bi_mod = function(tipo){
+biplot.psych(fa(N,nfactors = 2,fm="mle",rotate = tipo),main = "",col=c(2,3,4),pch = c(21,18))  
+}
+sapply(rot,bi_mod)
+```
+
+```{r}
+KMO(R)
+```
+```{r}
+summary(prcomp(N,scale=TRUE))
+```
+```{r}
+
+library(MVN)
+
+
+N2<-N[sample(nrow(N),0.3*nrow(N)),]
+
+result = mvn(N2, mvnTest = "mardia", alpha = 0.05) 
+result$multivariateNormality
+
+```
+
+
+
+```{r}
+library(psych)
+library(polycor)
+library(ggcorrplot)
+
+mat_cor <- hetcor(N2)$correlations #matriz de correlación policórica 
+ggcorrplot(mat_cor,type="lower",hc.order = T)
+
+```
+
+```{r}
+library(parameters) # Hay que instalar parameters la primera vez que se usa 
+check_sphericity_bartlett(N2)
+```
+
+
+
+```{r}
+library(psych)
+R = cor(N2)
+scree(R)
+ # se grafican los valores propios de R, y del análisis Factorial
+
+```
+
+
+
+
+```{r}
+ w<-fa(R, nfactors =1, rotate = "quartimax", fm ="pa") #Factores principales
+
+ x<-fa(R, nfactors =1, rotate = "quartimax", fm ="mle") #Maxima versimilitud
+
+```
+
+
+```{r}
+print.psych(w, sort=TRUE)
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
